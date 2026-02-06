@@ -1,31 +1,359 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>CSV Data</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Excel Data Viewer</title>
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+    <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: #1a1a1a;
+            color: #e0e0e0;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        h1 {
+            color: #ffffff;
+            margin-bottom: 30px;
+            font-size: clamp(24px, 5vw, 36px);
+            text-align: center;
+        }
+        
+        .table-wrapper {
+            background: #2a2a2a;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+            overflow-x: auto;
+        }
+        
+        /* DataTables dark theme overrides */
+        table.dataTable {
+            width: 100% !important;
+            background: #2a2a2a;
+            color: #e0e0e0;
+            border-collapse: collapse;
+        }
+        
+        table.dataTable thead th {
+            background: #333333;
+            color: #ffffff;
+            border-bottom: 2px solid #444444;
+            padding: 12px;
+            font-weight: 600;
+            text-align: left;
+        }
+        
+        table.dataTable tbody td {
+            padding: 12px;
+            border-bottom: 1px solid #3a3a3a;
+        }
+        
+        table.dataTable tbody tr {
+            background: #2a2a2a;
+        }
+        
+        table.dataTable tbody tr:hover {
+            background: #353535 !important;
+        }
+        
+        /* Preserve Excel cell colors */
+        table.dataTable tbody td[style] {
+            /* Excel colors will be applied inline */
+        }
+        
+        /* DataTables controls */
+        .dataTables_wrapper {
+            color: #e0e0e0;
+        }
+        
+        .dataTables_filter input {
+            background: #333333;
+            border: 1px solid #444444;
+            color: #e0e0e0;
+            padding: 8px 12px;
+            border-radius: 6px;
+            margin-left: 8px;
+        }
+        
+        .dataTables_filter input:focus {
+            outline: none;
+            border-color: #5a9fd4;
+        }
+        
+        .dataTables_length select {
+            background: #333333;
+            border: 1px solid #444444;
+            color: #e0e0e0;
+            padding: 6px 10px;
+            border-radius: 6px;
+            margin: 0 8px;
+        }
+        
+        .dataTables_info {
+            color: #b0b0b0;
+            padding-top: 12px;
+        }
+        
+        .dataTables_paginate {
+            padding-top: 12px;
+        }
+        
+        .dataTables_paginate .paginate_button {
+            background: #333333;
+            color: #e0e0e0 !important;
+            border: 1px solid #444444;
+            padding: 6px 12px;
+            margin: 0 2px;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+        
+        .dataTables_paginate .paginate_button:hover {
+            background: #404040 !important;
+            border-color: #5a9fd4 !important;
+            color: #ffffff !important;
+        }
+        
+        .dataTables_paginate .paginate_button.current {
+            background: #5a9fd4 !important;
+            border-color: #5a9fd4 !important;
+            color: #ffffff !important;
+        }
+        
+        .dataTables_paginate .paginate_button.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        /* Loading state */
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #b0b0b0;
+            font-size: 18px;
+        }
+        
+        .loading:after {
+            content: '...';
+            animation: dots 1.5s steps(4, end) infinite;
+        }
+        
+        @keyframes dots {
+            0%, 20% { content: '.'; }
+            40% { content: '..'; }
+            60%, 100% { content: '...'; }
+        }
+        
+        /* Mobile responsiveness */
+        @media screen and (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            
+            .table-wrapper {
+                padding: 15px;
+                border-radius: 8px;
+            }
+            
+            table.dataTable thead th,
+            table.dataTable tbody td {
+                padding: 8px;
+                font-size: 14px;
+            }
+            
+            .dataTables_filter input,
+            .dataTables_length select {
+                font-size: 14px;
+            }
+        }
+        
+        /* Color contrast helper for dark backgrounds */
+        table.dataTable tbody td[style*="background"] {
+            position: relative;
+        }
+    </style>
 </head>
 <body>
-    <h1>My Data</h1>
-    <table id="csvTable" class="display"></table>
+    <div class="container">
+        <h1>📊 Excel Data Viewer</h1>
+        <div class="table-wrapper">
+            <div id="loading" class="loading">Loading your data</div>
+            <table id="excelTable" class="display" style="display:none;"></table>
+        </div>
+    </div>
 
     <script>
-        Papa.parse('data.csv', {
-            download: true,
-            header: true,
-            complete: function(results) {
-                $('#csvTable').DataTable({
-                    data: results.data,
-                    columns: Object.keys(results.data[0]).map(key => ({
-                        title: key,
-                        data: key
-                    }))
-                });
+        // Function to convert Excel color to RGB
+        function argbToRgba(argb) {
+            if (!argb) return null;
+            
+            // Handle indexed colors (common in Excel)
+            const indexedColors = {
+                1: '#000000', 2: '#FFFFFF', 3: '#FF0000', 4: '#00FF00', 5: '#0000FF',
+                6: '#FFFF00', 7: '#FF00FF', 8: '#00FFFF', 9: '#800000', 10: '#008000'
+            };
+            
+            if (typeof argb === 'number') {
+                return indexedColors[argb] || null;
             }
-        });
+            
+            if (typeof argb === 'string') {
+                // Remove 'FF' alpha channel if present
+                const hex = argb.replace(/^FF/, '');
+                return `#${hex}`;
+            }
+            
+            if (argb.rgb) {
+                const rgb = argb.rgb.replace(/^FF/, '');
+                return `#${rgb}`;
+            }
+            
+            return null;
+        }
+        
+        // Function to determine if text should be light or dark based on background
+        function getContrastColor(bgColor) {
+            if (!bgColor) return '#e0e0e0';
+            
+            // Remove # if present
+            const color = bgColor.replace('#', '');
+            
+            // Convert to RGB
+            const r = parseInt(color.substr(0, 2), 16);
+            const g = parseInt(color.substr(2, 2), 16);
+            const b = parseInt(color.substr(4, 2), 16);
+            
+            // Calculate luminance
+            const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+            
+            // Return black for light backgrounds, white for dark
+            return luminance > 0.5 ? '#000000' : '#ffffff';
+        }
+
+        // Load and parse Excel file
+        fetch('data.xlsx')  // Change this to your Excel filename
+            .then(res => res.arrayBuffer())
+            .then(data => {
+                const workbook = XLSX.read(data, { cellStyles: true });
+                const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+                
+                // Get range
+                const range = XLSX.utils.decode_range(firstSheet['!ref']);
+                
+                // Extract headers
+                const headers = [];
+                for (let col = range.s.c; col <= range.e.c; col++) {
+                    const cellAddress = XLSX.utils.encode_cell({ r: range.s.r, c: col });
+                    const cell = firstSheet[cellAddress];
+                    headers.push(cell ? cell.v : `Column ${col + 1}`);
+                }
+                
+                // Extract data with styles
+                const tableData = [];
+                for (let row = range.s.r + 1; row <= range.e.r; row++) {
+                    const rowData = {};
+                    for (let col = range.s.c; col <= range.e.c; col++) {
+                        const cellAddress = XLSX.utils.encode_cell({ r: row, c: col });
+                        const cell = firstSheet[cellAddress];
+                        const header = headers[col];
+                        
+                        if (cell) {
+                            let cellValue = cell.v;
+                            let bgColor = null;
+                            let textColor = null;
+                            
+                            // Try to extract colors
+                            if (cell.s) {
+                                if (cell.s.fgColor) {
+                                    bgColor = argbToRgba(cell.s.fgColor);
+                                }
+                                if (cell.s.patternType && cell.s.bgColor) {
+                                    bgColor = argbToRgba(cell.s.bgColor);
+                                }
+                                if (cell.s.font && cell.s.font.color) {
+                                    textColor = argbToRgba(cell.s.font.color);
+                                }
+                            }
+                            
+                            // Create value with color data
+                            if (bgColor || textColor) {
+                                rowData[header] = {
+                                    value: cellValue,
+                                    bgColor: bgColor,
+                                    textColor: textColor || (bgColor ? getContrastColor(bgColor) : '#e0e0e0')
+                                };
+                            } else {
+                                rowData[header] = cellValue;
+                            }
+                        } else {
+                            rowData[header] = '';
+                        }
+                    }
+                    tableData.push(rowData);
+                }
+                
+                // Initialize DataTable
+                $('#loading').hide();
+                $('#excelTable').show();
+                
+                $('#excelTable').DataTable({
+                    data: tableData,
+                    columns: headers.map(header => ({
+                        title: header,
+                        data: header,
+                        render: function(data, type, row) {
+                            if (type === 'display' && data && typeof data === 'object' && data.value !== undefined) {
+                                let style = '';
+                                if (data.bgColor) {
+                                    style += `background-color: ${data.bgColor}; `;
+                                }
+                                if (data.textColor) {
+                                    style += `color: ${data.textColor}; `;
+                                }
+                                return `<span style="${style}">${data.value}</span>`;
+                            }
+                            return data && typeof data === 'object' ? data.value : data;
+                        }
+                    })),
+                    pageLength: 25,
+                    responsive: true,
+                    language: {
+                        search: "Search:",
+                        lengthMenu: "Show _MENU_ entries",
+                        info: "Showing _START_ to _END_ of _TOTAL_ entries",
+                        infoEmpty: "No entries available",
+                        infoFiltered: "(filtered from _MAX_ total entries)",
+                        paginate: {
+                            first: "First",
+                            last: "Last",
+                            next: "Next",
+                            previous: "Previous"
+                        }
+                    }
+                });
+            })
+            .catch(error => {
+                console.error('Error loading Excel file:', error);
+                $('#loading').html('❌ Error loading file. Make sure "data.xlsx" is in the same directory.');
+            });
     </script>
 </body>
 </html>
