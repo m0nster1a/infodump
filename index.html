@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GT-AI FiveM Server - Loot Cheat Sheet</title>
+    <title>GT-AI Loot Guide</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <style>
         * {
@@ -13,35 +13,35 @@
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
-            padding: 20px;
+            padding: 10px;
         }
 
         .container {
-            max-width: 1400px;
+            max-width: 1200px;
             margin: 0 auto;
             background: white;
-            border-radius: 15px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
             overflow: hidden;
         }
 
         header {
             background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
             color: white;
-            padding: 30px;
+            padding: 20px;
             text-align: center;
         }
 
         header h1 {
-            font-size: 2.5em;
-            margin-bottom: 10px;
+            font-size: clamp(1.5rem, 5vw, 2.5rem);
+            margin-bottom: 5px;
         }
 
         header p {
-            font-size: 1.1em;
+            font-size: clamp(0.9rem, 3vw, 1.1rem);
             opacity: 0.9;
         }
 
@@ -50,18 +50,21 @@
             background: #f5f5f5;
             border-bottom: 2px solid #ddd;
             overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
         }
 
         .tab {
-            padding: 15px 30px;
+            padding: 15px 20px;
             cursor: pointer;
             background: #f5f5f5;
             border: none;
-            font-size: 1em;
+            font-size: clamp(0.9rem, 2.5vw, 1rem);
             font-weight: 600;
             transition: all 0.3s;
             color: #555;
             white-space: nowrap;
+            flex: 1;
+            min-width: 100px;
         }
 
         .tab:hover {
@@ -75,7 +78,13 @@
         }
 
         .content {
-            padding: 30px;
+            padding: 15px;
+        }
+
+        @media (min-width: 768px) {
+            .content {
+                padding: 25px;
+            }
         }
 
         .tab-content {
@@ -93,13 +102,12 @@
         }
 
         .search-box {
-            margin-bottom: 20px;
-            padding: 12px 20px;
+            margin-bottom: 15px;
+            padding: 12px 15px;
             width: 100%;
-            max-width: 400px;
             border: 2px solid #ddd;
             border-radius: 25px;
-            font-size: 1em;
+            font-size: 1rem;
             transition: border 0.3s;
         }
 
@@ -108,59 +116,83 @@
             border-color: #2a5298;
         }
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
+        /* Card-based layout for mobile */
+        .cards {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+            margin-top: 15px;
+        }
+
+        @media (min-width: 640px) {
+            .cards {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .cards {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        .card {
             background: white;
+            border: 1px solid #e0e0e0;
             border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-
-        thead {
-            background: linear-gradient(135deg, #2a5298 0%, #1e3c72 100%);
-            color: white;
-        }
-
-        th {
             padding: 15px;
-            text-align: left;
-            font-weight: 600;
-            font-size: 0.95em;
+            transition: all 0.3s;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         }
 
-        td {
-            padding: 12px 15px;
-            border-bottom: 1px solid #f0f0f0;
+        .card:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            transform: translateY(-2px);
         }
 
-        tbody tr {
-            transition: background 0.2s;
+        .card-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #1e3c72;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
-        tbody tr:hover {
-            background: #f8f9fa;
-        }
-
-        .badge {
+        .card-category {
             display: inline-block;
-            padding: 4px 12px;
+            padding: 4px 10px;
             border-radius: 12px;
-            font-size: 0.85em;
+            font-size: 0.75rem;
             font-weight: 600;
+            color: white;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
-        .badge-common { background: #95a5a6; color: white; }
-        .badge-uncommon { background: #27ae60; color: white; }
-        .badge-rare { background: #3498db; color: white; }
-        .badge-epic { background: #9b59b6; color: white; }
-        .badge-legendary { background: #f39c12; color: white; }
+        .card-description {
+            color: #666;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            margin-top: 8px;
+        }
+
+        .container-type {
+            display: inline-block;
+            background: #2a5298;
+            color: white;
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
 
         .loading {
             text-align: center;
-            padding: 40px;
-            font-size: 1.2em;
+            padding: 40px 20px;
+            font-size: 1.1rem;
             color: #666;
         }
 
@@ -169,171 +201,343 @@
             border: 1px solid #fcc;
             color: #c33;
             padding: 15px;
-            border-radius: 5px;
+            border-radius: 8px;
             margin: 20px 0;
-        }
-
-        .item-category {
-            padding: 4px 10px;
-            border-radius: 4px;
-            font-size: 0.85em;
-            font-weight: 500;
         }
 
         .no-results {
             text-align: center;
-            padding: 40px;
+            padding: 40px 20px;
             color: #999;
-            font-size: 1.1em;
+            font-size: 1.1rem;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #2a5298;
+        }
+
+        .stat-label {
+            font-size: 0.85rem;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Group containers */
+        .container-group {
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .container-group-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #1e3c72;
+            margin-bottom: 12px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #e0e0e0;
+        }
+
+        .container-items {
+            display: grid;
+            gap: 8px;
+        }
+
+        .container-item {
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 6px;
+            border-left: 3px solid #2a5298;
+        }
+
+        .container-item-name {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 4px;
+        }
+
+        .container-item-desc {
+            font-size: 0.9rem;
+            color: #666;
         }
     </style>
 </head>
 <body>
     <div class="container">
         <header>
-            <h1>🎮 GT-AI FiveM Server</h1>
-            <p>Loot & Container Cheat Sheet</p>
+            <h1>🎮 GT-AI</h1>
+            <p>Loot Guide</p>
         </header>
 
         <div class="tabs">
             <button class="tab active" onclick="showTab('items')">Items</button>
             <button class="tab" onclick="showTab('containers')">Containers</button>
-            <button class="tab" onclick="showTab('loot')">Loot Table</button>
         </div>
 
         <div class="content">
             <div id="items" class="tab-content active">
-                <input type="text" class="search-box" id="searchItems" placeholder="🔍 Search items..." onkeyup="filterTable('itemsTable', 'searchItems')">
+                <input type="text" class="search-box" id="searchItems" placeholder="🔍 Search items..." onkeyup="filterItems()">
+                <div id="itemsStats"></div>
                 <div id="itemsContent" class="loading">Loading items...</div>
             </div>
 
             <div id="containers" class="tab-content">
-                <input type="text" class="search-box" id="searchContainers" placeholder="🔍 Search containers..." onkeyup="filterTable('containersTable', 'searchContainers')">
+                <input type="text" class="search-box" id="searchContainers" placeholder="🔍 Search containers..." onkeyup="filterContainers()">
+                <div id="containersStats"></div>
                 <div id="containersContent" class="loading">Loading containers...</div>
-            </div>
-
-            <div id="loot" class="tab-content">
-                <input type="text" class="search-box" id="searchLoot" placeholder="🔍 Search loot table..." onkeyup="filterTable('lootTable', 'searchLoot')">
-                <div id="lootContent" class="loading">Loading loot table...</div>
             </div>
         </div>
     </div>
 
     <script>
-        let excelData = {};
+        let itemsData = [];
+        let containersData = [];
         let categories = {};
 
         // Load the Excel file
         async function loadExcelFile() {
             try {
-                // Replace with your actual Excel file URL on GitHub
-                const url = 'GTAI_LootSheet_Template.xlsx';
+                const url = 'GTAI_Loot_Simple.xlsx';
                 const response = await fetch(url);
                 const arrayBuffer = await response.arrayBuffer();
                 const workbook = XLSX.read(arrayBuffer, { type: 'array' });
 
-                // Read all sheets
-                workbook.SheetNames.forEach(sheetName => {
-                    const worksheet = workbook.Sheets[sheetName];
-                    excelData[sheetName] = XLSX.utils.sheet_to_json(worksheet);
-                });
+                // Read Items sheet
+                if (workbook.Sheets['Items']) {
+                    itemsData = XLSX.utils.sheet_to_json(workbook.Sheets['Items']);
+                }
 
-                // Load categories for color coding
-                if (excelData['Categories Reference']) {
-                    excelData['Categories Reference'].forEach(cat => {
-                        categories[cat['Category Name']] = cat['Color Code (Hex)'];
+                // Read Containers sheet
+                if (workbook.Sheets['Containers']) {
+                    containersData = XLSX.utils.sheet_to_json(workbook.Sheets['Containers']);
+                }
+
+                // Read Categories
+                if (workbook.Sheets['Categories']) {
+                    const cats = XLSX.utils.sheet_to_json(workbook.Sheets['Categories']);
+                    cats.forEach(cat => {
+                        categories[cat.Category] = cat.Color;
                     });
                 }
 
                 displayItems();
                 displayContainers();
-                displayLootTable();
             } catch (error) {
                 console.error('Error loading Excel file:', error);
                 document.getElementById('itemsContent').innerHTML = 
-                    '<div class="error">Failed to load data. Make sure the Excel file is in the same directory.</div>';
+                    '<div class="error">⚠️ Failed to load data. Make sure GTAI_Loot_Simple.xlsx is in the same folder.</div>';
+                document.getElementById('containersContent').innerHTML = 
+                    '<div class="error">⚠️ Failed to load data.</div>';
             }
         }
 
         function displayItems() {
-            const items = excelData['Items'] || [];
-            let html = '<table id="itemsTable"><thead><tr>';
-            html += '<th>ID</th><th>Name</th><th>Category</th><th>Description</th><th>Rarity</th><th>Stack</th></tr></thead><tbody>';
+            if (!itemsData.length) {
+                document.getElementById('itemsContent').innerHTML = '<div class="no-results">No items found</div>';
+                return;
+            }
 
-            items.forEach(item => {
-                const rarityClass = `badge-${(item.Rarity || 'common').toLowerCase()}`;
+            // Stats
+            const categoryCount = [...new Set(itemsData.map(i => i.Category))].length;
+            const statsHtml = `
+                <div class="stats">
+                    <div class="stat">
+                        <div class="stat-number">${itemsData.length}</div>
+                        <div class="stat-label">Items</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-number">${categoryCount}</div>
+                        <div class="stat-label">Categories</div>
+                    </div>
+                </div>
+            `;
+            document.getElementById('itemsStats').innerHTML = statsHtml;
+
+            // Cards
+            let html = '<div class="cards" id="itemsCards">';
+            itemsData.forEach(item => {
                 const categoryColor = categories[item.Category] || '#A9A9A9';
-                html += `<tr>
-                    <td><strong>${item['Item ID']}</strong></td>
-                    <td>${item['Item Name']}</td>
-                    <td><span class="item-category" style="background: ${categoryColor}; color: white;">${item.Category}</span></td>
-                    <td>${item.Description || ''}</td>
-                    <td><span class="badge ${rarityClass}">${item.Rarity || 'Common'}</span></td>
-                    <td>${item['Stack Size'] || 1}</td>
-                </tr>`;
+                const description = item.Description ? `<div class="card-description">${item.Description}</div>` : '';
+                
+                html += `
+                    <div class="card" data-name="${item['Item Name']}" data-category="${item.Category}" data-desc="${item.Description || ''}">
+                        <div class="card-title">
+                            <span>${item['Item Name']}</span>
+                        </div>
+                        <span class="card-category" style="background: ${categoryColor};">${item.Category}</span>
+                        ${description}
+                    </div>
+                `;
             });
+            html += '</div>';
 
-            html += '</tbody></table>';
-            document.getElementById('itemsContent').innerHTML = items.length ? html : '<div class="no-results">No items found</div>';
+            document.getElementById('itemsContent').innerHTML = html;
         }
 
         function displayContainers() {
-            const containers = excelData['Containers'] || [];
-            let html = '<table id="containersTable"><thead><tr>';
-            html += '<th>ID</th><th>Name</th><th>Type</th><th>Location</th><th>Respawn Time</th></tr></thead><tbody>';
+            if (!containersData.length) {
+                document.getElementById('containersContent').innerHTML = '<div class="no-results">No containers found</div>';
+                return;
+            }
 
-            containers.forEach(container => {
-                html += `<tr>
-                    <td><strong>${container['Container ID']}</strong></td>
-                    <td>${container['Container Name']}</td>
-                    <td>${container['Container Type']}</td>
-                    <td>${container['Location/Map'] || 'Various'}</td>
-                    <td>${container['Respawn Time'] || 'N/A'}</td>
-                </tr>`;
+            // Group by container type
+            const grouped = {};
+            containersData.forEach(container => {
+                const type = container['Container Type'];
+                if (!grouped[type]) {
+                    grouped[type] = [];
+                }
+                grouped[type].push(container);
             });
 
-            html += '</tbody></table>';
-            document.getElementById('containersContent').innerHTML = containers.length ? html : '<div class="no-results">No containers found</div>';
+            // Stats
+            const containerTypes = Object.keys(grouped).length;
+            const totalItems = containersData.length;
+            const statsHtml = `
+                <div class="stats">
+                    <div class="stat">
+                        <div class="stat-number">${containerTypes}</div>
+                        <div class="stat-label">Types</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-number">${totalItems}</div>
+                        <div class="stat-label">Loot Entries</div>
+                    </div>
+                </div>
+            `;
+            document.getElementById('containersStats').innerHTML = statsHtml;
+
+            // Display groups
+            let html = '<div id="containerGroups">';
+            Object.keys(grouped).sort().forEach(type => {
+                html += `
+                    <div class="container-group" data-type="${type}">
+                        <div class="container-group-title">
+                            <span class="container-type">${type}</span>
+                        </div>
+                        <div class="container-items">
+                `;
+                
+                grouped[type].forEach(item => {
+                    const description = item.Description ? 
+                        `<div class="container-item-desc">${item.Description}</div>` : '';
+                    
+                    html += `
+                        <div class="container-item" data-name="${item['Item Name']}" data-desc="${item.Description || ''}">
+                            <div class="container-item-name">${item['Item Name']}</div>
+                            ${description}
+                        </div>
+                    `;
+                });
+
+                html += `
+                        </div>
+                    </div>
+                `;
+            });
+            html += '</div>';
+
+            document.getElementById('containersContent').innerHTML = html;
         }
 
-        function displayLootTable() {
-            const loot = excelData['Loot Table'] || [];
-            const items = excelData['Items'] || [];
-            const containers = excelData['Containers'] || [];
-
-            // Create lookup maps
-            const itemMap = {};
-            items.forEach(item => {
-                itemMap[item['Item ID']] = item['Item Name'];
-            });
-
-            const containerMap = {};
-            containers.forEach(container => {
-                containerMap[container['Container ID']] = container['Container Name'];
-            });
-
-            let html = '<table id="lootTable"><thead><tr>';
-            html += '<th>Container</th><th>Item</th><th>Drop Chance</th><th>Quantity</th></tr></thead><tbody>';
-
-            loot.forEach(entry => {
-                const containerName = containerMap[entry['Container ID']] || entry['Container ID'];
-                const itemName = itemMap[entry['Item ID']] || entry['Item ID'];
-                const quantity = `${entry['Min Quantity']}-${entry['Max Quantity']}`;
+        function filterItems() {
+            const input = document.getElementById('searchItems').value.toUpperCase();
+            const cards = document.querySelectorAll('#itemsCards .card');
+            
+            let visibleCount = 0;
+            cards.forEach(card => {
+                const name = card.dataset.name.toUpperCase();
+                const category = card.dataset.category.toUpperCase();
+                const desc = card.dataset.desc.toUpperCase();
                 
-                html += `<tr>
-                    <td><strong>${containerName}</strong></td>
-                    <td>${itemName}</td>
-                    <td>${entry['Drop Chance (%)']}%</td>
-                    <td>${quantity}</td>
-                </tr>`;
+                if (name.includes(input) || category.includes(input) || desc.includes(input)) {
+                    card.style.display = '';
+                    visibleCount++;
+                } else {
+                    card.style.display = 'none';
+                }
             });
 
-            html += '</tbody></table>';
-            document.getElementById('lootContent').innerHTML = loot.length ? html : '<div class="no-results">No loot data found</div>';
+            if (visibleCount === 0 && input.length > 0) {
+                if (!document.getElementById('noItemResults')) {
+                    const noResults = document.createElement('div');
+                    noResults.id = 'noItemResults';
+                    noResults.className = 'no-results';
+                    noResults.textContent = 'No items found';
+                    document.getElementById('itemsCards').after(noResults);
+                }
+            } else {
+                const noResults = document.getElementById('noItemResults');
+                if (noResults) noResults.remove();
+            }
+        }
+
+        function filterContainers() {
+            const input = document.getElementById('searchContainers').value.toUpperCase();
+            const groups = document.querySelectorAll('.container-group');
+            
+            let visibleGroupCount = 0;
+            groups.forEach(group => {
+                const type = group.dataset.type.toUpperCase();
+                const items = group.querySelectorAll('.container-item');
+                let visibleItemCount = 0;
+
+                items.forEach(item => {
+                    const name = item.dataset.name.toUpperCase();
+                    const desc = item.dataset.desc.toUpperCase();
+                    
+                    if (type.includes(input) || name.includes(input) || desc.includes(input)) {
+                        item.style.display = '';
+                        visibleItemCount++;
+                    } else {
+                        item.style.display = 'none';
+                    }
+                });
+
+                if (visibleItemCount > 0) {
+                    group.style.display = '';
+                    visibleGroupCount++;
+                } else {
+                    group.style.display = 'none';
+                }
+            });
+
+            if (visibleGroupCount === 0 && input.length > 0) {
+                if (!document.getElementById('noContainerResults')) {
+                    const noResults = document.createElement('div');
+                    noResults.id = 'noContainerResults';
+                    noResults.className = 'no-results';
+                    noResults.textContent = 'No containers found';
+                    document.getElementById('containerGroups').after(noResults);
+                }
+            } else {
+                const noResults = document.getElementById('noContainerResults');
+                if (noResults) noResults.remove();
+            }
         }
 
         function showTab(tabName) {
-            // Hide all tabs
             document.querySelectorAll('.tab-content').forEach(tab => {
                 tab.classList.remove('active');
             });
@@ -341,40 +545,10 @@
                 tab.classList.remove('active');
             });
 
-            // Show selected tab
             document.getElementById(tabName).classList.add('active');
             event.target.classList.add('active');
         }
 
-        function filterTable(tableId, searchId) {
-            const input = document.getElementById(searchId);
-            const filter = input.value.toUpperCase();
-            const table = document.getElementById(tableId);
-            
-            if (!table) return;
-            
-            const tr = table.getElementsByTagName('tr');
-
-            for (let i = 1; i < tr.length; i++) {
-                const row = tr[i];
-                let found = false;
-                const td = row.getElementsByTagName('td');
-                
-                for (let j = 0; j < td.length; j++) {
-                    if (td[j]) {
-                        const txtValue = td[j].textContent || td[j].innerText;
-                        if (txtValue.toUpperCase().indexOf(filter) > -1) {
-                            found = true;
-                            break;
-                        }
-                    }
-                }
-                
-                row.style.display = found ? '' : 'none';
-            }
-        }
-
-        // Load data when page loads
         window.addEventListener('load', loadExcelFile);
     </script>
 </body>
