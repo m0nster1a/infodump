@@ -1,81 +1,31 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Loot Table</title>
-    <style>
-        body { font-family: sans-serif; padding: 20px; }
-        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-        th, td { border: 1px solid #ccc; padding: 10px; text-align: left; }
-        th { background-color: #f4f4f4; }
-        tr:nth-child(even) { background-color: #f9f9f9; }
-    </style>
+    <title>CSV Data</title>
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
 </head>
 <body>
-
-    <h1>Game Loot Table</h1>
-    <div id="status">Loading data...</div>
-    <table id="loot-table">
-        <thead>
-            <tr id="table-head"></tr>
-        </thead>
-        <tbody id="table-body"></tbody>
-    </table>
+    <h1>My Data</h1>
+    <table id="csvTable" class="display"></table>
 
     <script>
-        // 1. Enter the exact name of your file here
-        const csvFile = 'loot.csv'; 
-
-        fetch(csvFile)
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error("Could not find file: " + csvFile);
-                }
-                return response.text();
-            })
-            .then(text => {
-                // 2. Split the text into rows
-                const rows = text.split('\n');
-                
-                // 3. Get the Headers (first row)
-                const headers = rows[0].split(',');
-                const thead = document.getElementById('table-head');
-                
-                headers.forEach(header => {
-                    const th = document.createElement('th');
-                    th.textContent = header.trim();
-                    thead.appendChild(th);
+        Papa.parse('data.csv', {
+            download: true,
+            header: true,
+            complete: function(results) {
+                $('#csvTable').DataTable({
+                    data: results.data,
+                    columns: Object.keys(results.data[0]).map(key => ({
+                        title: key,
+                        data: key
+                    }))
                 });
-
-                // 4. Get the Data (rest of the rows)
-                const tbody = document.getElementById('table-body');
-                
-                for (let i = 1; i < rows.length; i++) {
-                    // Skip empty rows (often happens at end of file)
-                    if (rows[i].trim() === "") continue;
-
-                    const rowData = rows[i].split(',');
-                    const tr = document.createElement('tr');
-                    
-                    rowData.forEach(cell => {
-                        const td = document.createElement('td');
-                        td.textContent = cell.trim();
-                        tr.appendChild(td);
-                    });
-                    
-                    tbody.appendChild(tr);
-                }
-                
-                // Remove loading text
-                document.getElementById('status').style.display = 'none';
-            })
-            .catch(error => {
-                console.error(error);
-                document.getElementById('status').textContent = "Error: " + error.message;
-                document.getElementById('status').style.color = "red";
-            });
+            }
+        });
     </script>
-
 </body>
 </html>
